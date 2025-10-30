@@ -1,13 +1,14 @@
 package lotto;
 
-import camp.nextstep.edu.missionutils.test.NsTest;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static camp.nextstep.edu.missionutils.test.Assertions.assertRandomUniqueNumbersInRangeTest;
 import static camp.nextstep.edu.missionutils.test.Assertions.assertSimpleTest;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import camp.nextstep.edu.missionutils.test.NsTest;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class ApplicationTest extends NsTest {
     private static final String ERROR_MESSAGE = "[ERROR]";
@@ -52,6 +53,49 @@ class ApplicationTest extends NsTest {
             runException("1000j");
             assertThat(output()).contains(ERROR_MESSAGE);
         });
+    }
+
+    @Test
+    void 입력한_금액이_정수_외의_문자를_입력한_경우_IllegalArgumentException이_발생한다() {
+        assertSimpleTest(() -> {
+            assertThatThrownBy(() -> runException("ab"))
+                    .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        });
+    }
+
+    @Test
+    void 입력한_금액이_1000원으로_나누어_떨어지지_않은_경우_IllegalArgumentException을_발생한다() {
+        assertSimpleTest(() -> {
+            assertThatThrownBy(() -> runException("1300"))
+                    .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        });
+    }
+
+    @Test
+    void 입력한_금액이_0원_이하를_입력한_경우_IllegalArgumentException을_발생한다() {
+        assertSimpleTest(() -> {
+            assertThatThrownBy(() -> runException("0"))
+                    .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThat(output()).contains(ERROR_MESSAGE);
+        });
+    }
+
+    @Test
+    void 유효한_입력일_경우_구입한_로또_수량_및_번호를_오름차순_출력한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("2000");  // 2000원 입력
+                    assertThat(output()).contains(
+                            "2개를 구매했습니다.",
+                            "[8, 21, 23, 41, 42, 43]",
+                            "[3, 5, 11, 16, 32, 38]"
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43),
+                Arrays.asList(3, 5, 11, 16, 32, 38)
+        );
     }
 
     @Override
