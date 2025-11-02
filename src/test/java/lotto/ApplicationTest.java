@@ -9,6 +9,8 @@ import camp.nextstep.edu.missionutils.test.NsTest;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ApplicationTest extends NsTest {
     private static final String ERROR_MESSAGE = "[ERROR]";
@@ -57,36 +59,42 @@ class ApplicationTest extends NsTest {
 
     @Test
     void 입력한_금액이_정수_외의_문자를_입력한_경우_IllegalArgumentException이_발생한다() {
-        assertSimpleTest(() -> {
-            assertThatThrownBy(() -> runException("ab"))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
-            assertThat(output()).contains(ERROR_MESSAGE);
-        });
+        assertRandomUniqueNumbersInRangeTest(() -> {
+            run("ab", "1000", "1,2,3,4,5,6", "7");
+            assertThat(output()).contains(
+                    ERROR_MESSAGE,
+                    "1개를 구매했습니다."
+            );
+        }, List.of(8, 21, 23, 41, 42, 43));
     }
 
     @Test
     void 입력한_금액이_1000원으로_나누어_떨어지지_않은_경우_IllegalArgumentException을_발생한다() {
-        assertSimpleTest(() -> {
-            assertThatThrownBy(() -> runException("1300"))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
-            assertThat(output()).contains(ERROR_MESSAGE);
-        });
+        assertRandomUniqueNumbersInRangeTest(() -> {
+            run("1300", "1000", "1,2,3,4,5,6", "7");
+            assertThat(output()).contains(
+                    ERROR_MESSAGE,
+                    "1개를 구매했습니다."
+            );
+        }, List.of(8, 21, 23, 41, 42, 43));
     }
 
     @Test
     void 입력한_금액이_0원_이하를_입력한_경우_IllegalArgumentException을_발생한다() {
-        assertSimpleTest(() -> {
-            assertThatThrownBy(() -> runException("0"))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
-            assertThat(output()).contains(ERROR_MESSAGE);
-        });
+        assertRandomUniqueNumbersInRangeTest(() -> {
+            run("0", "1000", "1,2,3,4,5,6", "7");
+            assertThat(output()).contains(
+                    ERROR_MESSAGE,
+                    "1개를 구매했습니다."
+            );
+        }, List.of(8, 21, 23, 41, 42, 43));
     }
 
     @Test
     void 유효한_입력일_경우_구입한_로또_수량_및_번호를_오름차순_출력한다() {
         assertRandomUniqueNumbersInRangeTest(
                 () -> {
-                    run("2000");  // 2000원 입력
+                    run("2000", "1,2,3,4,5,6", "7");
                     assertThat(output()).contains(
                             "2개를 구매했습니다.",
                             "[8, 21, 23, 41, 42, 43]",
@@ -95,6 +103,121 @@ class ApplicationTest extends NsTest {
                 },
                 Arrays.asList(8, 21, 23, 41, 42, 43),
                 Arrays.asList(3, 5, 11, 16, 32, 38)
+        );
+    }
+
+    @Test
+    void 당첨_번호에_정수_외의_문자를_입력한_경우_IllegalArgumentException이_발생한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1,2,a,4,5,6", "1,2,3,4,5,6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0,2,3,4,5,6", "1,2,3,4,5,46"})
+    void 당첨_번호에_0_이하_또는_46_이상의_정수를_입력한_경우_IllegalArgumentException이_발생한다(String winningNumbers) {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", winningNumbers, "1,2,3,4,5,6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @Test
+    void 당첨_번호에_중복_번호를_입력한_경우_IllegalArgumentException이_발생한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1,2,3,4,5,5", "1,2,3,4,5,6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1,2,3,4,5", "1,2,3,4,5,6,7"})
+    void 당첨_번호가_6개가_아닌_경우_IllegalArgumentException이_발생한다(String winningNumbers) {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", winningNumbers, "1,2,3,4,5,6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @Test
+    void 당첨_번호_구분자가_쉼표가_아닌_경우_IllegalArgumentException이_발생한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1 2 3 4 5 6", "1,2,3,4,5,6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @Test
+    void 보너스_번호에_정수_외의_문자를_입력한_경우_IllegalArgumentException이_발생한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1,2,3,4,5,6", "a", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"0", "46", "-1", "100"})
+    void 보너스_번호에_0_이하_또는_46_이상의_정수를_입력한_경우_IllegalArgumentException이_발생한다(String bonusNumber) {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1,2,3,4,5,6", bonusNumber, "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
+        );
+    }
+
+    @Test
+    void 보너스_번호가_당첨_번호와_중복되는_경우_IllegalArgumentException이_발생한다() {
+        assertRandomUniqueNumbersInRangeTest(
+                () -> {
+                    run("1000", "1,2,3,4,5,6", "6", "7");
+                    assertThat(output()).contains(
+                            ERROR_MESSAGE,
+                            "1개를 구매했습니다."
+                    );
+                },
+                Arrays.asList(8, 21, 23, 41, 42, 43)
         );
     }
 

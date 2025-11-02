@@ -35,21 +35,21 @@
 
 #### 로또 당첨 기능
 
-- [ ] 당첨 로또 번호를 입력한다
+- [x] 당첨 로또 번호를 입력한다
     - 당첨 번호에 정수 외의 문자를 입력한 경우 IllegalArgumentException이 발생한다
     - 당첨 번호에 0 이하 46 이상의 정수를 입력할 경우 IllegalArgumentException을 발생한다
     - 당첨 번호에 중복 번호 입력 시 IllegalArgumentException을 발생한다
     - 당첨 번호 입력 시 6개가 아닌 경우 IllegalArgumentException을 발생한다
     - 구분자가 컴마가 아닌 경우 IllegalArgumentException을 발생한다
 
-- [ ] 보너스 번호를 입력한다
+- [x] 보너스 번호를 입력한다
     - 정수 외의 문자를 입력한 경우 IllegalArgumentException이 발생한다
     - 0 이하 46 이상의 정수를 입력할 경우 IllegalArgumentException을 발생한다
     - 보너스 번호가 당첨번호와 중복되는 경우 IllegalArgumentException을 발생한다
 
-- [ ] 로또 번호와 보너스 번호를 기준으로 구입한 개수만큼 당첨한 개수와 수익률을 판단한다
+- [x] 로또 번호와 보너스 번호를 기준으로 구입한 개수만큼 당첨한 개수와 수익률을 판단한다
     - 수익률은 소수점 둘째 자리에서 반올림한다
-- [ ] 당첨 내역을 출력한다
+- [x] 당첨 내역을 출력한다
 
 #### 예외처리
 
