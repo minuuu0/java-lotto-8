@@ -1,49 +1,33 @@
 package lotto;
 
-import camp.nextstep.edu.missionutils.Console;
 import camp.nextstep.edu.missionutils.Randoms;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Application {
+class Application {
 
-    public static final int LOTTO_AMOUNT = 1000;
+    private static final InputView inputView = new InputView();
+    private static final OutputView outputView = new OutputView();
 
     public static void main(String[] args) {
+        int purchaseAmount = inputView.readPurchaseAmount();
+        Lotto.validatePurchaseAmount(purchaseAmount);
+        int ticketCount = Lotto.calculateTicketCount(purchaseAmount);
 
-        int purchaseAmount;
+        List<Lotto> lottos = generateLottos(ticketCount);
 
-        try {
-            purchaseAmount = Integer.parseInt(Console.readLine());
-            if (purchaseAmount % LOTTO_AMOUNT != 0) {
-                System.out.println("[ERROR] 로또 구입 금액은 1000원으로 나누어 떨어져야합니다.");
-                throw new IllegalArgumentException("[ERROR] 로또 번호는 1000원으로 나누어 떨어져야합니다.");
-            }
+        outputView.printPurchaseSuccess(ticketCount);
+        outputView.printLottoNumbers(lottos);
+    }
 
-            if (purchaseAmount <= 0) {
-                System.out.println("[ERROR] 로또 구입 금액은 양의 정수이어야 합니다.");
-                throw new IllegalArgumentException("[ERROR] 로또 구입 금액은 양의 정수이어야 합니다.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("[ERROR] 로또 구입 금액은 양의 정수이어야 합니다.");
-            throw new IllegalArgumentException("[ERROR] 로또 구입 금액은 양의 정수이어야 합니다.");
-        }
-
-        int ticketCount = purchaseAmount / LOTTO_AMOUNT;
-
-        Lotto[] lottos = new Lotto[ticketCount];
-
+    private static List<Lotto> generateLottos(int ticketCount) {
+        List<Lotto> lottos = new ArrayList<>();
         for (int i = 0; i < ticketCount; i++) {
             List<Integer> lottoNumbers = Randoms.pickUniqueNumbersInRange(1, 45, 6);
             Collections.sort(lottoNumbers);
-            lottos[i] = new Lotto(lottoNumbers);
+            lottos.add(new Lotto(lottoNumbers));
         }
-        System.out.println(ticketCount + "개를 구매했습니다.");
-
-        for (int i = 0; i < ticketCount; i++) {
-            Lotto lotto = lottos[i];
-            System.out.println(lotto.toString());
-        }
-
+        return lottos;
     }
 }
