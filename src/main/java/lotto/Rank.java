@@ -38,8 +38,4 @@ enum Rank {
     int getPrize() {
         return prize;
     }
-
-    int getMatchCount() {
-        return matchCount;
-    }
 }
