@@ -52,7 +52,6 @@ class InputView {
         try {
             return Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            System.out.println(ERROR_POSITIVE_INTEGER);
             throw new IllegalArgumentException(ERROR_POSITIVE_INTEGER);
         }
     }
@@ -71,7 +70,6 @@ class InputView {
 
     private void validateCommaSeparator(String input) {
         if (!input.contains(",")) {
-            System.out.println(ERROR_COMMA_SEPARATOR);
             throw new IllegalArgumentException(ERROR_COMMA_SEPARATOR);
         }
     }
@@ -80,7 +78,6 @@ class InputView {
         try {
             return Integer.parseInt(token);
         } catch (NumberFormatException e) {
-            System.out.println(ERROR_INVALID_WINNING_NUMBER);
             throw new IllegalArgumentException(ERROR_INVALID_WINNING_NUMBER);
         }
     }
@@ -89,7 +86,6 @@ class InputView {
         try {
             return Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            System.out.println(ERROR_INVALID_BONUS_NUMBER);
             throw new IllegalArgumentException(ERROR_INVALID_BONUS_NUMBER);
         }
     }
